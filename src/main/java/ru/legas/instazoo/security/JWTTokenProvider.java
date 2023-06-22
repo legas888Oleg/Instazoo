@@ -1,7 +1,6 @@
 package ru.legas.instazoo.security;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -36,5 +35,20 @@ public class JWTTokenProvider {
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET)
                 .compact();
+    }
+
+    public boolean validateToken(String token){
+        try{
+            Jwts.parser().setSigningKey(SecurityConstants.SECRET)
+                    .parseClaimsJws(token);
+            return true;
+        } catch (SignatureException |
+                MalformedJwtException |
+                ExpiredJwtException |
+                UnsupportedJwtException |
+                IllegalArgumentException ex){
+            LOG.error(ex.getMessage());
+            return false;
+        }
     }
 }
