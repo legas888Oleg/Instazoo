@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.legas.instazoo.dto.CommentDTO;
 import ru.legas.instazoo.entity.Comment;
+import ru.legas.instazoo.entity.ImageModel;
 import ru.legas.instazoo.entity.Post;
 import ru.legas.instazoo.entity.User;
 import ru.legas.instazoo.exceptions.PostNotFoundException;
@@ -16,6 +17,7 @@ import ru.legas.instazoo.repositories.UserRepository;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CommentService {
@@ -54,6 +56,11 @@ public class CommentService {
                 .orElseThrow(() -> new PostNotFoundException("Post cannot be found"));
 
         return commentRepository.findAllByPost(post);
+    }
+
+    public void deleteComment(Long commentID){
+        Optional<Comment> comment = commentRepository.findById(commentID);
+        comment.ifPresent(commentRepository :: delete);
     }
 
     private User getUserByPrincipal(Principal principal){
