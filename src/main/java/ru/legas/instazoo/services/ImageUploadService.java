@@ -77,6 +77,16 @@ public class ImageUploadService {
         return imageRepository.save(imageModel);
     }
 
+    public ImageModel getImageToUser(Principal principal){
+        User user = getUserByPrincipal(principal);
+
+        ImageModel imageModel = imageRepository.findByUserId(user.getId()).orElse(null);
+        if(!ObjectUtils.isEmpty(imageModel)){
+            imageModel.setImageBytes(decompressBytes(imageModel.getImageBytes()));
+        }
+        return imageModel;
+    }
+
     private byte[] compressBytes(byte[] data){
         Deflater deflater = new Deflater();
         deflater.setInput(data);
