@@ -15,6 +15,7 @@ import ru.legas.instazoo.repositories.PostRepository;
 import ru.legas.instazoo.repositories.UserRepository;
 
 import java.security.Principal;
+import java.util.List;
 
 @Service
 public class CommentService {
@@ -36,8 +37,7 @@ public class CommentService {
     public Comment saveComment(Long postID, CommentDTO commentDTO, Principal principal){
         User user = getUserByPrincipal(principal);
         Post post = postRepository.findById(postID)
-                .orElseThrow(() -> new PostNotFoundException(
-                        "Post cannot be found for username: " + user.getEmail()));
+                .orElseThrow(() -> new PostNotFoundException("Post cannot be found"));
         Comment comment = new Comment();
         comment.setPost(post);
         comment.setUserId(user.getId());
@@ -47,6 +47,13 @@ public class CommentService {
         LOG.info("Saving comment for Post: {}", post.getId());
 
         return commentRepository.save(comment);
+    }
+
+    public List<Comment> getAllCommentsForPost(Long postID){
+        Post post = postRepository.findById(postID)
+                .orElseThrow(() -> new PostNotFoundException("Post cannot be found"));
+
+        return commentRepository.findAllByPost(post);
     }
 
     private User getUserByPrincipal(Principal principal){
