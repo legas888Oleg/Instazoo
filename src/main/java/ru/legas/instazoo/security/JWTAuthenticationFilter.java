@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.legas.instazoo.services.CustomUserDetailsService;
 
@@ -19,5 +20,13 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+    }
+
+    private String getJWTFromRequest(HttpServletRequest request){
+        String bearToken = request.getHeader(SecurityConstants.HEADER_STRING);
+        if(StringUtils.hasText(bearToken) && bearToken.startsWith(SecurityConstants.TOKEN_PREFIX)){
+            return bearToken.split(" ")[1];
+        }
+        return null;
     }
 }
