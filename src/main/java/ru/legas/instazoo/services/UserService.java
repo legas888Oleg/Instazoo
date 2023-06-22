@@ -55,6 +55,10 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User getCurrentUser(Principal principal){
+        return getUserByPrincipal(principal);
+    }
+
     private User getUserByPrincipal(Principal principal){
         String username = principal.getName();
         return userRepository.findUserByUsername(username)
