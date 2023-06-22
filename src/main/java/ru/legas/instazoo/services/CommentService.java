@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.legas.instazoo.dto.CommentDTO;
 import ru.legas.instazoo.entity.Comment;
-import ru.legas.instazoo.entity.ImageModel;
 import ru.legas.instazoo.entity.Post;
 import ru.legas.instazoo.entity.User;
 import ru.legas.instazoo.exceptions.PostNotFoundException;
