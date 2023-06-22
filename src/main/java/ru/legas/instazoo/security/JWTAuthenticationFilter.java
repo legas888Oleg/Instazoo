@@ -22,7 +22,7 @@ import java.util.Collections;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
-    public static final Logger LOG = LoggerFactory.getLogger(JWTTokenProvider.class);
+    public static final Logger LOG = LoggerFactory.getLogger(JWTAuthenticationFilter.class);
 
     private JWTTokenProvider jwtTokenProvider;
 
