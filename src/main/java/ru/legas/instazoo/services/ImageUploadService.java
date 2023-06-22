@@ -5,19 +5,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import ru.legas.instazoo.dto.CommentDTO;
-import ru.legas.instazoo.entity.Comment;
-import ru.legas.instazoo.entity.Post;
 import ru.legas.instazoo.entity.User;
-import ru.legas.instazoo.exceptions.PostNotFoundException;
-import ru.legas.instazoo.repositories.CommentRepository;
 import ru.legas.instazoo.repositories.ImageRepository;
 import ru.legas.instazoo.repositories.PostRepository;
 import ru.legas.instazoo.repositories.UserRepository;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.security.Principal;
-import java.util.List;
-import java.util.Optional;
+import java.util.zip.Deflater;
 
 @Service
 public class ImageUploadService {
@@ -36,7 +32,24 @@ public class ImageUploadService {
         this.userRepository = userRepository;
     }
 
-
+    private byte[] compressBytes(byte[] data){
+        Deflater deflater = new Deflater();
+        deflater.setInput(data);
+        deflater.finish();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
+        byte[] buffer = new byte[1024];
+        while (!deflater.finished()){
+            int count = deflater.deflate(buffer);
+            outputStream.write(buffer, 0, count);
+        }
+        try{
+            outputStream.close();
+        } catch (IOException e){
+            LOG.error("Cannot compress Bytes");
+        }
+        System.out.println("Compressed Image Byte Size - " + outputStream.toByteArray().length);
+        return outputStream.toByteArray();
+    }
 
 
     private User getUserByPrincipal(Principal principal){
