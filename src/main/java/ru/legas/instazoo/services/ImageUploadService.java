@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 import ru.legas.instazoo.entity.ImageModel;
+import ru.legas.instazoo.entity.Post;
 import ru.legas.instazoo.entity.User;
+import ru.legas.instazoo.exceptions.PostNotFoundException;
 import ru.legas.instazoo.repositories.ImageRepository;
 import ru.legas.instazoo.repositories.PostRepository;
 import ru.legas.instazoo.repositories.UserRepository;
@@ -54,6 +56,24 @@ public class ImageUploadService {
         imageModel.setUserId(user.getId());
         imageModel.setImageBytes(compressBytes(file.getBytes()));
         imageModel.setName(file.getOriginalFilename());
+        return imageRepository.save(imageModel);
+    }
+
+    public ImageModel uploadImageToPost(MultipartFile file, Principal principal, Long postID)
+            throws IOException {
+
+        User user = getUserByPrincipal(principal);
+        Post post = user.getPosts()
+                        .stream()
+                        .filter(p -> p.getId().equals(postID))
+                        .collect(toSinglePostCollector());
+
+        ImageModel imageModel = new ImageModel();
+        imageModel.setPostId(post.getId());
+        imageModel.setImageBytes(compressBytes(file.getBytes()));
+        imageModel.setName(file.getOriginalFilename());
+        LOG.info("Uploading image to Post {}", post.getId());
+
         return imageRepository.save(imageModel);
     }
 
