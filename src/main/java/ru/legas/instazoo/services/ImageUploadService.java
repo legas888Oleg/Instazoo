@@ -13,6 +13,8 @@ import ru.legas.instazoo.repositories.UserRepository;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
@@ -70,6 +72,17 @@ public class ImageUploadService {
         return outputStream.toByteArray();
     }
 
+    private <T> Collector<T, ?, T> toSinglePostCollector(){
+        return Collectors.collectingAndThen(
+                Collectors.toList(),
+                list -> {
+                    if(list.size() != 1){
+                        throw new IllegalStateException();
+                    }
+                    return list.get(0);
+                }
+        );
+    }
 
     private User getUserByPrincipal(Principal principal){
         String username = principal.getName();
