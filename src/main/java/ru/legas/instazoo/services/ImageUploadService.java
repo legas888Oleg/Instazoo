@@ -13,7 +13,9 @@ import ru.legas.instazoo.repositories.UserRepository;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 @Service
 public class ImageUploadService {
@@ -48,6 +50,23 @@ public class ImageUploadService {
             LOG.error("Cannot compress Bytes");
         }
         System.out.println("Compressed Image Byte Size - " + outputStream.toByteArray().length);
+        return outputStream.toByteArray();
+    }
+
+    private static byte[] decompressBytes(byte[] data){
+        Inflater inflater = new Inflater();
+        inflater.setInput(data);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(data.length);
+        byte[] buffer = new byte[1024];
+        try {
+            while (!inflater.finished()) {
+                int count = inflater.inflate(buffer);
+                outputStream.write(buffer, 0, count);
+            }
+            outputStream.close();
+        } catch (IOException | DataFormatException e){
+            LOG.error("Cannot decompress Bytes");
+        }
         return outputStream.toByteArray();
     }
 
