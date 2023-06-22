@@ -1,6 +1,7 @@
 package ru.legas.instazoo.annotations;
 
 import ru.legas.instazoo.validations.EmailValidator;
+import ru.legas.instazoo.validations.PasswordMatchesValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
