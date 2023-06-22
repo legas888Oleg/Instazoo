@@ -1,15 +1,16 @@
 package ru.legas.instazoo.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import ru.legas.instazoo.entity.ImageModel;
-import ru.legas.instazoo.entity.Post;
 
 import java.util.Optional;
 
+@Repository
 public interface ImageRepository extends JpaRepository<ImageModel, Long> {
 
-    Optional<Post> findByUserID(Long id);
+    Optional<ImageModel> findByUserId(Long userId);
 
-    Optional<Post> findByPostID(Long id);
+    Optional<ImageModel> findByPostId(Long postId);
 
 }
