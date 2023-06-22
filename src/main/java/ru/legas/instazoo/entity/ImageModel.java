@@ -1,12 +1,12 @@
 package ru.legas.instazoo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
+
 @Data
-@Entity
 @NoArgsConstructor
 public class ImageModel {
     @Id
