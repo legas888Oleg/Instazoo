@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.legas.instazoo.entity.ImageModel;
 import ru.legas.instazoo.entity.Post;
 import ru.legas.instazoo.entity.User;
-import ru.legas.instazoo.exceptions.PostNotFoundException;
+import ru.legas.instazoo.exceptions.ImageNotFoundException;
 import ru.legas.instazoo.repositories.ImageRepository;
 import ru.legas.instazoo.repositories.PostRepository;
 import ru.legas.instazoo.repositories.UserRepository;
@@ -81,6 +81,16 @@ public class ImageUploadService {
         User user = getUserByPrincipal(principal);
 
         ImageModel imageModel = imageRepository.findByUserId(user.getId()).orElse(null);
+        if(!ObjectUtils.isEmpty(imageModel)){
+            imageModel.setImageBytes(decompressBytes(imageModel.getImageBytes()));
+        }
+        return imageModel;
+    }
+
+    public ImageModel getImageToPost(Long postID){
+        ImageModel imageModel = imageRepository.findByPostId(postID)
+                .orElseThrow(() -> new ImageNotFoundException(
+                        "Cannot find image to Post: " + postID));
         if(!ObjectUtils.isEmpty(imageModel)){
             imageModel.setImageBytes(decompressBytes(imageModel.getImageBytes()));
         }
