@@ -5,6 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.multipart.MultipartFile;
+import ru.legas.instazoo.entity.ImageModel;
 import ru.legas.instazoo.entity.User;
 import ru.legas.instazoo.repositories.ImageRepository;
 import ru.legas.instazoo.repositories.PostRepository;
@@ -34,6 +37,24 @@ public class ImageUploadService {
         this.imageRepository = imageRepository;
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+    }
+
+    public ImageModel uploadImageToUser(MultipartFile file, Principal principal)
+            throws IOException {
+
+        User user = getUserByPrincipal(principal);
+        LOG.info("Upload image profile to User {}", user.getUsername());
+
+        ImageModel userProfileImage = imageRepository.findByUserId(user.getId()).orElse(null);
+        if(!ObjectUtils.isEmpty(userProfileImage)){
+            imageRepository.delete(userProfileImage);
+        }
+
+        ImageModel imageModel = new ImageModel();
+        imageModel.setUserId(user.getId());
+        imageModel.setImageBytes(compressBytes(file.getBytes()));
+        imageModel.setName(file.getOriginalFilename());
+        return imageRepository.save(imageModel);
     }
 
     private byte[] compressBytes(byte[] data){
