@@ -7,6 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.legas.instazoo.entity.User;
 import ru.legas.instazoo.entity.enums.ERole;
+import ru.legas.instazoo.exceptions.UserExistException;
 import ru.legas.instazoo.payload.request.SignupRequest;
 import ru.legas.instazoo.repositories.UserRepository;
 
