@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.legas.instazoo.dto.PostDTO;
+import ru.legas.instazoo.entity.ImageModel;
 import ru.legas.instazoo.entity.Post;
 import ru.legas.instazoo.entity.User;
 import ru.legas.instazoo.exceptions.PostNotFoundException;
@@ -80,6 +81,13 @@ public class PostService {
     public List<Post> getAllPostForUser(Principal principal){
         User user = getUserByPrincipal(principal);
         return postRepository.findAllByUserOrderByCreatedDateDesc(user);
+    }
+
+    public void deletePost(Long postID, Principal principal){
+        Post post = getPostById(postID, principal);
+        Optional<ImageModel> imageModel = imageRepository.findByPostId(post.getId());
+        postRepository.delete(post);
+        imageModel.ifPresent(imageRepository :: delete);
     }
 
     private User getUserByPrincipal(Principal principal){
