@@ -3,10 +3,18 @@ package ru.legas.instazoo.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import ru.legas.instazoo.dto.CommentDTO;
+import ru.legas.instazoo.entity.Comment;
+import ru.legas.instazoo.entity.Post;
+import ru.legas.instazoo.entity.User;
+import ru.legas.instazoo.exceptions.PostNotFoundException;
 import ru.legas.instazoo.repositories.CommentRepository;
 import ru.legas.instazoo.repositories.PostRepository;
 import ru.legas.instazoo.repositories.UserRepository;
+
+import java.security.Principal;
 
 @Service
 public class CommentService {
@@ -23,5 +31,27 @@ public class CommentService {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+    }
+
+    public Comment saveComment(Long postID, CommentDTO commentDTO, Principal principal){
+        User user = getUserByPrincipal(principal);
+        Post post = postRepository.findById(postID)
+                .orElseThrow(() -> new PostNotFoundException(
+                        "Post cannot be found for username: " + user.getEmail()));
+        Comment comment = new Comment();
+        comment.setPost(post);
+        comment.setUserId(user.getId());
+        comment.setUsername(user.getUsername());
+        comment.setMessage(comment.getMessage());
+
+        LOG.info("Saving comment for Post: {}", post.getId());
+
+        return commentRepository.save(comment);
+    }
+
+    private User getUserByPrincipal(Principal principal){
+        String username = principal.getName();
+        return userRepository.findUserByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found with username " + username));
     }
 }

@@ -13,8 +13,7 @@ import java.util.Set;
 @Data
 public class CommentDTO {
     private Long id;
-    private String username;
-    private Post post;
-    private Long userId;
+    @NotEmpty
     private String message;
+    private String username;
 }
