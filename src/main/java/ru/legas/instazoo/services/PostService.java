@@ -58,6 +58,11 @@ public class PostService {
                         "Post cannot be found for username: " + user.getEmail()));
     }
 
+    public List<Post> getAllPostForUser(Principal principal){
+        User user = getUserByPrincipal(principal);
+        return postRepository.findAllByUserOrderByCreatedDateDesc(user);
+    }
+
     private User getUserByPrincipal(Principal principal){
         String username = principal.getName();
         return userRepository.findUserByUsername(username)
