@@ -13,6 +13,7 @@ import ru.legas.instazoo.repositories.PostRepository;
 import ru.legas.instazoo.repositories.UserRepository;
 
 import java.security.Principal;
+import java.util.List;
 
 @Service
 public class PostService {
@@ -43,6 +44,10 @@ public class PostService {
 
         LOG.info("Saving Post for User {}", user.getEmail());
         return postRepository.save(post);
+    }
+
+    public List<Post> getAllPosts(){
+        return postRepository.findAllByOrderByCreatedDateDesc();
     }
 
     private User getUserByPrincipal(Principal principal){
