@@ -23,6 +23,7 @@ import ru.legas.instazoo.services.CustomUserDetailsService;
         prePostEnabled = true
 )
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
     @Autowired
     private JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     @Autowired
