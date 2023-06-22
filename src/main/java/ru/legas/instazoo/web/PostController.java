@@ -34,8 +34,18 @@ public class PostController {
     private ResponseErrorValidation responseErrorValidation;
 
     @GetMapping("/all")
-    public ResponseEntity<List<PostDTO>> getAllPosts(Principal principal){
+    public ResponseEntity<List<PostDTO>> getAllPosts(){
         List<PostDTO> postDTOList = postService.getAllPosts()
+                .stream()
+                .map(postFacade::postToPostDIO)
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(postDTOList, HttpStatus.OK);
+    }
+
+    @GetMapping("/user/posts")
+    public ResponseEntity<List<PostDTO>> getAllPostsForUser(Principal principal){
+        List<PostDTO> postDTOList = postService.getAllPostForUser(principal)
                 .stream()
                 .map(postFacade::postToPostDIO)
                 .collect(Collectors.toList());
@@ -54,5 +64,14 @@ public class PostController {
 
         PostDTO createdPost = postFacade.postToPostDIO(post);
         return new ResponseEntity<>(createdPost, HttpStatus.OK);
+    }
+
+    @PostMapping("/{postID}/{username}/like")
+    public ResponseEntity<PostDTO> likePost(
+            @PathVariable("postID") String postID, @PathVariable("username") String username){
+
+        Post post = postService.likePost(Long.parseLong(postID), username);
+        PostDTO postDTO = postFacade.postToPostDIO(post);
+        return new ResponseEntity<>(postDTO, HttpStatus.OK);
     }
 }
