@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.legas.instazoo.dto.PostDTO;
 import ru.legas.instazoo.entity.Post;
 import ru.legas.instazoo.entity.User;
+import ru.legas.instazoo.exceptions.PostNotFoundException;
 import ru.legas.instazoo.repositories.ImageRepository;
 import ru.legas.instazoo.repositories.PostRepository;
 import ru.legas.instazoo.repositories.UserRepository;
@@ -48,6 +49,13 @@ public class PostService {
 
     public List<Post> getAllPosts(){
         return postRepository.findAllByOrderByCreatedDateDesc();
+    }
+
+    public Post getPostById(Long postId, Principal principal){
+        User user = getUserByPrincipal(principal);
+        return postRepository.findPostByIdAndUser(postId, user)
+                .orElseThrow(() -> new PostNotFoundException(
+                        "Post cannot be found for username: " + user.getEmail()));
     }
 
     private User getUserByPrincipal(Principal principal){
