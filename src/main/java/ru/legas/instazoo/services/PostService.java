@@ -15,6 +15,7 @@ import ru.legas.instazoo.repositories.UserRepository;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PostService {
@@ -56,6 +57,24 @@ public class PostService {
         return postRepository.findPostByIdAndUser(postId, user)
                 .orElseThrow(() -> new PostNotFoundException(
                         "Post cannot be found for username: " + user.getEmail()));
+    }
+
+    public Post likePost(Long postID, String username){
+        Post post = postRepository.findById(postID)
+                .orElseThrow(() -> new PostNotFoundException("Post cannot be found"));
+
+        Optional<String> userLiked = post.getLikedUsers()
+                .stream()
+                .filter(u -> u.equals(username)).findAny();
+
+        if(userLiked.isPresent()){
+            post.setLikes(post.getLikes() - 1);
+            post.getLikedUsers().remove(username);
+        } else {
+            post.setLikes(post.getLikes() + 1);
+            post.getLikedUsers().add(username);
+        }
+        return postRepository.save(post);
     }
 
     public List<Post> getAllPostForUser(Principal principal){
