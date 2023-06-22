@@ -1,6 +1,8 @@
 package ru.legas.instazoo.payload.request;
 
 import lombok.Data;
+import ru.legas.instazoo.annotations.PasswordMatches;
+import ru.legas.instazoo.annotations.ValidEmail;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -8,10 +10,11 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 @Data
+@PasswordMatches
 public class SignupRequest {
     @Email(message = "It should hava email format")
     @NotBlank(message = "Your email is required")
-//    @ValidEmail
+    @ValidEmail
     private String email;
 
     @NotEmpty(message = "Please enter your name")
