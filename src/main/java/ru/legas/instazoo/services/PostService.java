@@ -3,10 +3,16 @@ package ru.legas.instazoo.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import ru.legas.instazoo.dto.PostDTO;
+import ru.legas.instazoo.entity.Post;
+import ru.legas.instazoo.entity.User;
 import ru.legas.instazoo.repositories.ImageRepository;
 import ru.legas.instazoo.repositories.PostRepository;
 import ru.legas.instazoo.repositories.UserRepository;
+
+import java.security.Principal;
 
 @Service
 public class PostService {
@@ -23,5 +29,25 @@ public class PostService {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.imageRepository = imageRepository;
+    }
+
+    public Post createPost(PostDTO postDTO, Principal principal){
+        User user = getUserByPrincipal(principal);
+        Post post = new Post();
+        post.setUser(user);
+        post.setCaption(postDTO.getCaption());
+        post.setLocation(postDTO.getLocation());
+        post.setTitle(postDTO.getTitle());
+        post.setTitle(postDTO.getTitle());
+        post.setLikes(0);
+
+        LOG.info("Saving Post for User {}", user.getEmail());
+        return postRepository.save(post);
+    }
+
+    private User getUserByPrincipal(Principal principal){
+        String username = principal.getName();
+        return userRepository.findUserByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Username not found with username " + username));
     }
 }
