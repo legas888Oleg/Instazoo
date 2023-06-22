@@ -16,6 +16,8 @@ import ru.legas.instazoo.validations.ResponseErrorValidation;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/post")
@@ -30,6 +32,16 @@ public class PostController {
 
     @Autowired
     private ResponseErrorValidation responseErrorValidation;
+
+    @GetMapping("/all")
+    public ResponseEntity<List<PostDTO>> getAllPosts(Principal principal){
+        List<PostDTO> postDTOList = postService.getAllPosts()
+                .stream()
+                .map(postFacade::postToPostDIO)
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(postDTOList, HttpStatus.OK);
+    }
 
     @PostMapping("/create")
     public ResponseEntity<Object> createPost(
