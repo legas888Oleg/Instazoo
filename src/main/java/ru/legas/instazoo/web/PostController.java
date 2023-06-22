@@ -11,6 +11,7 @@ import ru.legas.instazoo.dto.UserDTO;
 import ru.legas.instazoo.entity.Post;
 import ru.legas.instazoo.entity.User;
 import ru.legas.instazoo.facade.PostFacade;
+import ru.legas.instazoo.payload.response.MessageResponse;
 import ru.legas.instazoo.services.PostService;
 import ru.legas.instazoo.validations.ResponseErrorValidation;
 
@@ -73,5 +74,13 @@ public class PostController {
         Post post = postService.likePost(Long.parseLong(postID), username);
         PostDTO postDTO = postFacade.postToPostDIO(post);
         return new ResponseEntity<>(postDTO, HttpStatus.OK);
+    }
+
+    @PostMapping("/{postID}/delete")
+    public ResponseEntity<MessageResponse> deletePost(
+            @PathVariable("postID") String postID, Principal principal){
+
+        postService.deletePost(Long.parseLong(postID), principal);
+        return new ResponseEntity<>(new MessageResponse("Post was deleted"), HttpStatus.OK);
     }
 }
