@@ -22,15 +22,15 @@ public class JWTTokenProvider {
 
         String userId = Long.toString(user.getId());
 
-        Map<String, Object> clainsMap = new HashMap<>();
-        clainsMap.put("id", userId);
-        clainsMap.put("username", user.getUsername());
-        clainsMap.put("firstname", user.getName());
-        clainsMap.put("lastname", user.getSurname());
+        Map<String, Object> claimsMap = new HashMap<>();
+        claimsMap.put("id", userId);
+        claimsMap.put("username", user.getUsername());
+        claimsMap.put("firstname", user.getName());
+        claimsMap.put("lastname", user.getSurname());
 
         return Jwts.builder()
                 .setSubject(userId)
-                .addClaims(clainsMap)
+                .addClaims(claimsMap)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET)
@@ -50,5 +50,14 @@ public class JWTTokenProvider {
             LOG.error(ex.getMessage());
             return false;
         }
+    }
+
+    public Long getUserIdFromToken(String token){
+        Claims claims = Jwts.parser().setSigningKey(SecurityConstants.SECRET)
+                .parseClaimsJws(token)
+                .getBody();
+
+        String id = (String) claims.get("id");
+        return Long.parseLong(id);
     }
 }
